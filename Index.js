@@ -42,3 +42,4 @@ client.on('messageCreate', (message) => {
 });
 
 client.login('process.env.DISCORD_TOKEN');
+
