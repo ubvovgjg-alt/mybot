@@ -1,10 +1,25 @@
 const express = require('express');
+const { Client, GatewayIntentBits } = require('discord.js');
+
+// إعداد الموقع
 const app = express();
+app.get('/', (req, res) => res.send('HarbBot is Online!'));
+app.listen(3000);
 
-app.get('/', (req, res) => {
-    res.send('<h1>مرحباً بك في موقع HarbBot!</h1><p>الموقع يعمل الآن بنجاح.</p>');
+// إعداد البوت
+const client = new Client({ 
+    intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent] 
 });
 
-app.listen(3000, () => {
-    console.log('السيرفر يعمل على المنفذ 3000');
+client.on('ready', () => {
+    console.log(`البوت جاهز: ${client.user.tag}`);
 });
+
+client.on('messageCreate', (message) => {
+    if (message.content === '!hi') {
+        message.reply('أهلاً بك في كلان حرب! ⚔️');
+    }
+});
+
+// هنا ضع التوكن الخاص بك
+client.login('YOUR_BOT_TOKEN_HERE');
