@@ -1,45 +1,29 @@
-const express = require('express');
 const { Client, GatewayIntentBits } = require('discord.js');
 
-const app = express();
-app.get('/', (req, res) => res.send('HarbBot is Online!'));
-app.listen(3000);
-
-const client = new Client({ 
-    intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent] 
+const client = new Client({
+    intents: [
+        GatewayIntentBits.Guilds,
+        GatewayIntentBits.GuildMessages,
+        GatewayIntentBits.MessageContent
+    ]
 });
 
-const db = {};
+client.once('ready', () => {
+    console.log(`تم تسجيل الدخول بنجاح كـ ${client.user.tag}!`);
+});
 
 client.on('messageCreate', (message) => {
     if (message.author.bot) return;
-    const uid = message.author.id;
-    if (!db[uid]) db[uid] = { txtLvl: 1, txtXp: 0, vcLvl: 1, vcXp: 0 };
 
-    // نظام الليفل الكتابي
-    if (db[uid].txtLvl < 100) {
-        db[uid].txtXp += 10;
-        if (db[uid].txtXp >= db[uid].txtLvl * 100) {
-            db[uid].txtXp = 0;
-            db[uid].txtLvl++;
-            message.channel.send(`🆙 العضو <@${uid}> وصل للمستوى الكتابي ${db[uid].txtLvl}!`);
-        }
+    if (message.content === '.hi') {
+        message.reply('أهلاً بك! البوت يعمل الآن بشكل ممتاز.');
     }
 
-    // --- الأوامر تبدأ بنقطة (.) ---
-    if (message.content.startsWith('.')) {
-        const cmd = message.content.slice(1).toLowerCase();
-
-        if (cmd === 'id') {
-            const user = db[uid];
-            message.reply(`🆔 **بطاقة العضو:**\n📝 مستوى الكتابة: ${user.txtLvl}\n🎙️ مستوى الصوت: ${user.vcLvl}\n\nالحد الأقصى للمستوى هو 100.`);
-        }
-        
-        if (cmd === 'hi') {
-            message.reply('أهلاً بك في كلان حرب! ⚔️');
-        }
+    if (message.content === '.id') {
+        message.reply(`معرف المستخدم الخاص بك هو: ${message.author.id}`);
     }
 });
 
-client.login('process.env.DISCORD_TOKEN');
-
+// هنا يكمن سر الأمان:
+// الكود لن يقرأ التوكن من هنا، بل سيطلبه من إعدادات Render السرية
+client.login(process.env.DISCORD_TOKEN);
